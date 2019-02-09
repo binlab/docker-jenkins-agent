@@ -4,11 +4,11 @@ _Here different versions of `Jenkins Agent` images for different tasks_
 
 ##  JNLP Agent + with Docker client and AWS CLI
 
-* [`3.28-jnlp`, `jnlp`, `latest` \(jnlp/Dockerfile\)](https://github.com/binlab/docker-jenkins-agent/blob/master/jnlp/Dockerfile)
+* [`3.29-jnlp`, `jnlp`, `latest` \(jnlp/Dockerfile\)](https://github.com/binlab/docker-jenkins-agent/blob/master/jnlp/Dockerfile)
 
-* [`3.28-jnlp-docker`, `jnlp-docker` \(jnlp/docker/Dockerfile\)](https://github.com/binlab/docker-jenkins-agent/blob/master/jnlp/docker/Dockerfile)
+* [`3.29-jnlp-docker`, `jnlp-docker` \(jnlp/docker/Dockerfile\)](https://github.com/binlab/docker-jenkins-agent/blob/master/jnlp/docker/Dockerfile)
 
-* [`3.28-jnlp-docker-awscli`, `jnlp-docker-awscli` \(jnlp/docker-awscli/Dockerfile\)](https://github.com/binlab/docker-jenkins-agent/blob/master/jnlp/docker-awscli/Dockerfile)
+* [`3.29-jnlp-docker-awscli`, `jnlp-docker-awscli` \(jnlp/docker-awscli/Dockerfile\)](https://github.com/binlab/docker-jenkins-agent/blob/master/jnlp/docker-awscli/Dockerfile)
 
     This is an image for using `JNLP` to establish a connection behind `NAT` and with built `Docker` client and + `AWS CLI`. Additional for user `jenkins` added group `docker` with `GID` `994` for communication with host Docker by socket `/var/run/docker.sock` without __`root`__ permissions.
 
