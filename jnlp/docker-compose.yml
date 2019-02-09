@@ -1,0 +1,31 @@
+version: '3.3'
+services:
+  jenkins-agent:
+    build: binlab/jenkins-jnlp-docker:latest
+    container_name: jenkins-agent
+    hostname: jenkins-agent
+    restart: unless-stopped
+    environment:
+      JENKINS_URL: "https://jenkins.example.com"
+      JENKINS_AGENT_WORKDIR: "/home/jenkins/agent"
+      JENKINS_SECRET: "jenkins-agent-secret" 
+      JENKINS_AGENT_NAME: "project-agent" 
+    volumes:
+      - jenkins-agent:/home/jenkins/agent:rw
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    networks:
+      - jenkins-agent
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  jenkins-agent:
+    driver: local
+
+networks:
+  jenkins-agent:
+    driver: bridge
+
