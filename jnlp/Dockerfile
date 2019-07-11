@@ -20,12 +20,13 @@ RUN addgroup -g ${GID} ${GROUP} \
          -u ${UID} -G ${GROUP} ${USER} \
     && set -x \
     && apk add --update --no-cache \
-       curl \
-       bash \
-       git \
-       openssh-client \
-       openssl \
-       procps \
+         curl \
+         bash \
+         git \
+         openssh-client \
+         openssl \
+         procps \
+    && printf "\n### Installing Jenkins agent v${AGENT_VER} ###\n\n" \
     && curl --create-dirs \
          -sSLo /usr/share/jenkins/slave.jar \
          https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${AGENT_VER}/remoting-${AGENT_VER}.jar \
@@ -35,7 +36,9 @@ RUN addgroup -g ${GID} ${GROUP} \
     && mkdir -p ${AGENT_WORKDIR} \
     && chown -R ${USER}:${GROUP} ${HOME} \
     && chmod +x /usr/local/bin/jenkins-agent \
-    && apk del curl
+    && printf "\n### Cleaning up ###\n\n" \
+    && apk del --purge -v \
+         curl
 
 VOLUME ${HOME}/.jenkins
 VOLUME ${AGENT_WORKDIR}
