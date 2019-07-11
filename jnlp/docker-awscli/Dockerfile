@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8u191-jdk-alpine3.8
 
 LABEL maintainer="Mark <mark.binlab@gmail.com>"
 
