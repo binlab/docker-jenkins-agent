@@ -45,3 +45,4 @@ WORKDIR ${HOME}
 USER ${USER}
 
 ENTRYPOINT ["jenkins-agent"]
+
