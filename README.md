@@ -12,6 +12,11 @@ _Here different versions of `Jenkins Agent` images for different tasks_
 
     This is an image for using `JNLP` to establish a connection behind `NAT` and with built `Docker` client and + `AWS CLI`. Additional for user `jenkins` added group `docker` with `GID` `994` for communication with host Docker by socket `/var/run/docker.sock` without __`root`__ permissions.
 
+* [`3.29-jnlp-docker-awscli-kubectl-helm`, `jnlp-docker-awscli-kubectl-helm` \(jnlp/docker-awscli-kubectl-helm/Dockerfile\)](https://github.com/binlab/docker-jenkins-agent/blob/master/jnlp/docker-awscli-kubectl-helm/Dockerfile)
+
+    This image is similar to the `jnlp-docker-awscli` image but has Kubernetes specific tools `kubectl` and `helm`
+
+
     Running by Docker:
     
     ```shell
