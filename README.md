@@ -1,6 +1,15 @@
 # Jenkins Agent based on Alpine Linux
 
-Latest build based on image: [`openjdk:8u191-jdk-alpine3.8`](https://hub.docker.com/_/openjdk?tab=tags)
+#### Current versions included in a latest builds:
+
+| Tool          | Version               |
+|---------------|-----------------------|
+| Java JDK      | `8u191-jdk-alpine3.8` |
+| Jenkins Agent | `3.29`                |
+| Docker CLI    | `18.09.1`             |
+| AWS CLI       | `1.16.197`            |
+| Kubectl       | `1.15.0`              |
+| Helm          | `2.14.1`              |
 
 _Here different versions of `Jenkins Agent` images for different tasks_
 
@@ -18,7 +27,6 @@ _Here different versions of `Jenkins Agent` images for different tasks_
 
     This image is similar to the `jnlp-docker-awscli` image but has Kubernetes specific tools `kubectl` and `helm`
 
-
     Running by Docker:
     
     ```shell
@@ -31,7 +39,7 @@ _Here different versions of `Jenkins Agent` images for different tasks_
     Running by Docker Compose:
 
     ```yaml
-    version: '3.3'
+    version: "3.3"
     services:
       jenkins-agent:
         image: binlab/jenkins-agent:jnlp-docker

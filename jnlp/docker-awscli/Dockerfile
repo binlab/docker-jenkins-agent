@@ -4,6 +4,7 @@ LABEL maintainer="Mark <mark.binlab@gmail.com>"
 
 ARG AGENT_VER=3.29
 ARG DOCKER_VER=18.09.1
+ARG AWSCLI_VER=1.16.197
 
 ARG USER=jenkins
 ARG GROUP=jenkins
@@ -24,13 +25,14 @@ RUN addgroup -g ${GID} ${GROUP} \
          -u ${UID} -G ${GROUP} ${USER} \
     && set -x \
     && apk add --update --no-cache \
-       curl \
-       bash \
-       git \
-       openssh-client \
-       openssl \
-       procps \
-       shadow \
+         curl \
+         bash \
+         git \
+         openssh-client \
+         openssl \
+         procps \
+         shadow \
+    && printf "\n### Installing Jenkins agent v${AGENT_VER} ###\n\n" \
     && curl --create-dirs \
          -sSLo /usr/share/jenkins/slave.jar \
          https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${AGENT_VER}/remoting-${AGENT_VER}.jar \
@@ -39,20 +41,25 @@ RUN addgroup -g ${GID} ${GROUP} \
     && mkdir ${HOME}/.jenkins \
     && mkdir -p ${AGENT_WORKDIR} \
     && chown -R ${USER}:${GROUP} ${HOME} \
-    && apk add --update --no-cache \
-         --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
-         aws-cli \
-    && curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}.tgz \
-    && tar xzvf docker-${DOCKER_VER}.tgz \
-         --strip 1 \
-         -C /usr/local/bin \
-         docker/docker \
-    && rm docker-${DOCKER_VER}.tgz \
     && chmod +x /usr/local/bin/jenkins-agent \
+    && printf "\n### Installing AWS CLI v${AWSCLI_VER} ###\n\n" \
+    && apk add --update --no-cache \
+         python \
+         py-pip \
+    && pip install awscli==${AWSCLI_VER} \
+    && printf "\n### Installing Docker CLI v${DOCKER_VER} ###\n\n" \
+    && curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VER}.tgz \
+         | tar xzv \
+             --strip 1 \
+             -C /usr/local/bin \
+             docker/docker \
     && chmod +x /usr/local/bin/docker \
     && addgroup -S -g ${DOCKER_GID} ${DOCKER_GROUP} \
     && usermod -a -G ${DOCKER_GROUP} ${USER} \
-    && apk del curl shadow
+    && printf "\n### Cleaning up ###\n\n" \
+    && apk del --purge -v \
+         shadow \
+         py-pip
 
 VOLUME ${HOME}/.jenkins
 VOLUME ${AGENT_WORKDIR}
@@ -60,5 +67,9 @@ VOLUME ${AGENT_WORKDIR}
 WORKDIR ${HOME}
 
 USER ${USER}
+
+RUN printf "\n### Testing versions, permissions and dependencies of binaries ###\n\n" \
+      && aws --version \
+      && echo "Docker CLI: $(docker --version)"
 
 ENTRYPOINT ["jenkins-agent"]
