@@ -2,7 +2,7 @@ FROM openjdk:8-jdk-alpine
 
 LABEL maintainer="Mark <mark.binlab@gmail.com>"
 
-ARG AGENT_VER=3.27
+ARG AGENT_VER=3.29
 
 ARG USER=jenkins
 ARG GROUP=jenkins
