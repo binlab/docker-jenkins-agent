@@ -1,5 +1,7 @@
 # Jenkins Agent based on Alpine Linux
 
+Latest build based on image: [`openjdk:8u191-jdk-alpine3.8`](https://hub.docker.com/_/openjdk?tab=tags)
+
 _Here different versions of `Jenkins Agent` images for different tasks_
 
 ##  JNLP Agent + with Docker client and AWS CLI
