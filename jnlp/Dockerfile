@@ -2,7 +2,7 @@ FROM openjdk:8-jdk-alpine
 
 LABEL maintainer="Mark <mark.binlab@gmail.com>"
 
-ARG AGENT_VER=3.29
+ARG AGENT_VER=3.27
 
 ARG USER=jenkins
 ARG GROUP=jenkins
@@ -45,4 +45,3 @@ WORKDIR ${HOME}
 USER ${USER}
 
 ENTRYPOINT ["jenkins-agent"]
-
