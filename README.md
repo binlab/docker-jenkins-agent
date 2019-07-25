@@ -10,7 +10,7 @@
 | AWS CLI           | `1.16.197`            |
 | Kubectl           | `1.15.0`              |
 | Helm              | `2.14.1`              |
-| Kubernetes-deploy | `0.26.7`                  |
+| Kubernetes-deploy | `0.26.7`              |
 | Kapp              | `0.9.0`               |
 
 _Here different versions of `Jenkins Agent` images for different tasks_
