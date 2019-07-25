@@ -2,14 +2,16 @@
 
 #### Current versions included in a latest builds:
 
-| Tool          | Version               |
-|---------------|-----------------------|
-| Java JDK      | `8u191-jdk-alpine3.8` |
-| Jenkins Agent | `3.29`                |
-| Docker CLI    | `18.09.1`             |
-| AWS CLI       | `1.16.197`            |
-| Kubectl       | `1.15.0`              |
-| Helm          | `2.14.1`              |
+| Tool              | Version               |
+|-------------------|-----------------------|
+| Java JDK          | `8u191-jdk-alpine3.8` |
+| Jenkins Agent     | `3.29`                |
+| Docker CLI        | `18.09.1`             |
+| AWS CLI           | `1.16.197`            |
+| Kubectl           | `1.15.0`              |
+| Helm              | `2.14.1`              |
+| Kubernetes-deploy | `0.26.7`                  |
+| Kapp              | `0.9.0`               |
 
 _Here different versions of `Jenkins Agent` images for different tasks_
 
@@ -26,6 +28,11 @@ _Here different versions of `Jenkins Agent` images for different tasks_
 * [`3.29-jnlp-docker-awscli-kubectl-helm`, `jnlp-docker-awscli-kubectl-helm` \(jnlp/docker-awscli-kubectl-helm/Dockerfile\)](https://github.com/binlab/docker-jenkins-agent/blob/master/jnlp/docker-awscli-kubectl-helm/Dockerfile)
 
     This image is similar to the `jnlp-docker-awscli` image but has Kubernetes specific tools `kubectl` and `helm`
+
+* [`3.29-jnlp-docker-awscli-kubectl-helm`, `jnlp-docker-awscli-kubectl-helm-kubernetes-deploy-kapp` \(jnlp/docker-awscli-kubectl-helm/kubernetes-deploy-kapp/Dockerfile\)](https://github.com/binlab/docker-jenkins-agent/blob/master/jnlp/docker-awscli-kubectl-helm-kubernetes-deploy-kapp/Dockerfile)
+
+    This image is similar to the `jnlp-docker-awscli-kubectl-helm` image but has additional Kubernetes  tools `kubernetes-deploy` and `kapp`
+
 
     Running by Docker:
     
