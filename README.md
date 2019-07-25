@@ -29,7 +29,7 @@ _Here different versions of `Jenkins Agent` images for different tasks_
 
     This image is similar to the `jnlp-docker-awscli` image but has Kubernetes specific tools `kubectl` and `helm`
 
-* [`3.29-jnlp-docker-awscli-kubectl-helm`, `jnlp-docker-awscli-kubectl-helm-kubernetes-deploy-kapp` \(jnlp/docker-awscli-kubectl-helm/kubernetes-deploy-kapp/Dockerfile\)](https://github.com/binlab/docker-jenkins-agent/blob/master/jnlp/docker-awscli-kubectl-helm-kubernetes-deploy-kapp/Dockerfile)
+* [`3.29-jnlp-docker-awscli-kubectl-helm-kubernetes-deploy-kapp`, `jnlp-docker-awscli-kubectl-helm-kubernetes-deploy-kapp` \(jnlp/docker-awscli-kubectl-helm/kubernetes-deploy-kapp/Dockerfile\)](https://github.com/binlab/docker-jenkins-agent/blob/master/jnlp/docker-awscli-kubectl-helm-kubernetes-deploy-kapp/Dockerfile)
 
     This image is similar to the `jnlp-docker-awscli-kubectl-helm` image but has additional Kubernetes  tools `kubernetes-deploy` and `kapp`
 
