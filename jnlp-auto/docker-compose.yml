@@ -1,0 +1,33 @@
+version: '3.3'
+services:
+  jenkins-auto-agent:
+    build:
+        dockerfile: Dockerfile
+        context: .
+    container_name: jenkins-auto-agent
+    restart: unless-stopped
+    environment:
+      JENKINS_URL: "https://jenkins-server.example.io"
+      JENKINS_AGENT_WORKDIR: "/home/jenkins/agent"
+      JENKINS_SECRET: "example-bot:296682da3b9c6dc624551b1e17c"
+      JENKINS_AGENT_NAME: "project"
+      AUTO_REG: "true"
+    volumes:
+      - jenkins-auto-agent:/home/jenkins/agent:rw
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    networks:
+      - jenkins-auto-agent
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  jenkins-auto-agent:
+    driver: local
+
+networks:
+  jenkins-auto-agent:
+    driver: bridge
+
