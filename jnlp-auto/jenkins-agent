@@ -1,0 +1,138 @@
+#!/bin/sh
+
+# Usage jenkins-agent [options] -url http://jenkins [SECRET] [AGENT_NAME]
+# Optional environment variables :
+# * JENKINS_TUNNEL : HOST:PORT for a tunnel to route TCP traffic to jenkins host, when jenkins can't be directly accessed over network
+# * JENKINS_URL : alternate jenkins URL
+# * JENKINS_SECRET : agent secret, if not set as an argument
+# * JENKINS_AGENT_NAME : agent name, if not set as an argument
+# * JENKINS_AGENT_WORKDIR : agent work directory, if not set by optional parameter -workDir
+HOSTNAME=$(hostname)
+download_slave_jar() {
+	curl -Ssfo "$DOWNLOAD_DIR/slave.jar" $JENKINS_URL/jnlpJars/slave.jar
+}
+
+download_cli_jar() {
+	curl -Ssfo "$DOWNLOAD_DIR/cli.jar" $JENKINS_URL/jnlpJars/jenkins-cli.jar
+}
+
+# a wrapper for the  jenkins_cli utility
+jenkins_cli() {
+	java -jar "$DOWNLOAD_DIR/cli.jar" -auth "$JENKINS_SECRET" "$@"
+}
+
+if [ $# -eq 1 ]; then
+
+	# if `docker run` only has one arguments, we assume user is running alternate command like `bash` to inspect the image
+	exec "$@"
+
+else
+
+	# if -tunnel is not provided, try env vars
+	case "$@" in
+	*"-tunnel "*) ;;
+	*)
+		if [ -n "$JENKINS_TUNNEL" ]; then
+			TUNNEL="-tunnel $JENKINS_TUNNEL"
+		fi
+		;;
+	esac
+
+	# if -workDir is not provided, try env vars
+	if [ -n "$JENKINS_AGENT_WORKDIR" ]; then
+		case "$@" in
+		*"-workDir"*) echo "Warning: Work directory is defined twice in command-line arguments and the environment variable" ;;
+		*)
+			WORKDIR="-workDir $JENKINS_AGENT_WORKDIR"
+			;;
+		esac
+	fi
+
+	if [ -n "$JENKINS_URL" ]; then
+		URL="-url $JENKINS_URL"
+	fi
+
+	if [ -z "$DOWNLOAD_DIR" ]; then
+		mkdir -p "$DOWNLOAD_DIR"
+	else
+		mkdir -p "$DOWNLOAD_DIR"
+	fi
+
+	if [ -z "${ENV}" ]; then
+		ENV="dev"
+	fi
+
+	if [ -n "$JENKINS_NAME" ]; then
+		JENKINS_AGENT_NAME="$JENKINS_NAME"
+	fi
+
+	if [ -z "$JENKINS_AGENT_NUM_EXECUTORS" ]; then
+		JENKINS_AGENT_NUM_EXECUTORS="1"
+	fi
+
+	if [ -z "$JNLP_PROTOCOL_OPTS" ]; then
+		echo "Warning: JnlpProtocol3 is disabled by default, use JNLP_PROTOCOL_OPTS to alter the behavior"
+		JNLP_PROTOCOL_OPTS="-Dorg.jenkinsci.remoting.engine.JnlpProtocol3.disabled=true"
+	fi
+
+	# if java home is defined, use it
+	JAVA_BIN="java"
+	if [ "$JAVA_HOME" ]; then
+		JAVA_BIN="$JAVA_HOME/bin/java"
+	fi
+
+	# if both required options are defined, do not pass the parameters
+	OPT_JENKINS_SECRET=""
+	if [ -n "$JENKINS_SECRET" ]; then
+		case "$@" in
+		*"${JENKINS_SECRET}"*) echo "Warning: SECRET is defined twice in command-line arguments and the environment variable" ;;
+		*)
+			OPT_JENKINS_SECRET="${JENKINS_SECRET}"
+			;;
+		esac
+	fi
+
+	OPT_JENKINS_AGENT_NAME=""
+	if [ -n "$JENKINS_AGENT_NAME" ]; then
+		case "$@" in
+		*"${JENKINS_AGENT_NAME}"*) echo "Warning: AGENT_NAME is defined twice in command-line arguments and the environment variable" ;;
+		*)
+			OPT_JENKINS_AGENT_NAME="${JENKINS_AGENT_NAME}"
+			;;
+		esac
+	fi
+
+	curl --version &>/dev/null || {
+		echo "please install curl"
+		exit 1
+	}
+
+	[ -z "$JENKINS_URL" ] || [ -z "$JENKINS_SECRET" ] && {
+		echo "please set  JENKINS_URL and JENKINS_SECRET env. variables"
+		echo "example:"
+		echo "  JENKINS_SECRET=user:password"
+		echo "  JENKINS_URL=http://localhost:8080"
+		exit 1
+	}
+	download_slave_jar
+	download_cli_jar
+
+	finish() {
+		echo "delete jenkins node $JENKINS_AGENT_NAME-$ENV-$HOSTNAME!"
+		jenkins_cli delete-node "$JENKINS_AGENT_NAME-$ENV-$HOSTNAME" || true
+	}
+
+	if [ -n "${AUTO_REG}" ]; then
+		trap finish HUP INT TERM KILL QUIT
+		jenkins_cli get-node "$JENKINS_AGENT_NAME-$ENV-$HOSTNAME" >/dev/null 2>&1 || {
+			CONFIG="<slave><remoteFS>$JENKINS_AGENT_WORKDIR</remoteFS><numExecutors>$JENKINS_AGENT_NUM_EXECUTORS</numExecutors><launcher class='hudson.slaves.JNLPLauncher' /><label>$JENKINS_AGENT_NAME $ENV</label></slave>"
+			echo $CONFIG | jenkins_cli create-node "$JENKINS_AGENT_NAME-$ENV-$HOSTNAME"
+		}
+		$JAVA_BIN $JAVA_OPTS -jar "$DOWNLOAD_DIR/slave.jar" -jnlpCredentials "$OPT_JENKINS_SECRET" -jnlpUrl "$JENKINS_URL/computer/$JENKINS_AGENT_NAME-$ENV-$HOSTNAME/slave-agent.jnlp"
+
+	else
+		exec $JAVA_BIN $JAVA_OPTS $JNLP_PROTOCOL_OPTS -cp "${DOWNLOAD_DIR}/slave.jar" hudson.remoting.jnlp.Main -headless $TUNNEL $URL $WORKDIR $OPT_JENKINS_SECRET $OPT_JENKINS_AGENT_NAME "$@"
+
+	fi
+fi
+exit 0
